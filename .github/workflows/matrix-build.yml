@@ -1,0 +1,42 @@
+name: Multi-Platform Matrix Build with Artifacts
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    # Define matrix for 3 different Python versions
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: matrix-19fc5f5
+        run: echo "Building for Python version ${{ matrix.python-version }}"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          echo "Dependencies installed for Python ${{ matrix.python-version }}"
+
+      - name: Generate build artifact
+        run: |
+          echo "Build output for Python version ${{ matrix.python-version }}" > build_output_${{ matrix.python-version }}.txt
+          echo "Timestamp: $(date)" >> build_output_${{ matrix.python-version }}.txt
+          echo "Python $(python --version)" >> build_output_${{ matrix.python-version }}.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-19fc5f5-py${{ matrix.python-version }}
+          path: build_output_${{ matrix.python-version }}.txt
